@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocHost.Controllers;
 
 [Controller]
-[Route("api/[controller]/status")]
+[Route("api/[controller]")]
 public class StatusController(DockerClient client) : ControllerBase
 {
     [HttpGet("")]
@@ -20,6 +20,7 @@ public class StatusController(DockerClient client) : ControllerBase
 
         return containers.Select(x => new ContainerStatusModel()
         {
+            ContainerId = x.ImageID,
             Id = x.ID,
             Name = string.Join(", ", x.Names),
             State = x.State,

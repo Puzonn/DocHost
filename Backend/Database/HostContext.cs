@@ -3,19 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DocHost.Database;
 
-public class HostContext : DbContext
+public class HostContext(DbContextOptions<HostContext> options, IConfiguration configuration) : DbContext
 {
     public DbSet<Server> Servers { get; set; }
-    
-    public string DbPath { get; }
-    
-    public HostContext()
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "blogging.db");
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString("DocHost"));
     }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source={DbPath}");
 }
