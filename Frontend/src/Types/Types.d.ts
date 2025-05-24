@@ -15,3 +15,9 @@ export interface Port {
 }
 
 export interface MinecraftHostCreation {}
+
+
+export interface Command{
+    Content: string;
+    IsServer: boolean;
+}
