@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="4c30f46c-5119-49d1-91d4-850145b28c77" name="dochost@159.69.251.235 Mapping">
+      <data-sources db="de9fbc92-7171-4af6-97e3-2b3259fd4360" />
+      <scope>
+        <node kind="database" qname="dochost">
+          <node kind="schema" negative="1" />
+        </node>
+      </scope>
+    </mapping>
+  </component>
+</project>

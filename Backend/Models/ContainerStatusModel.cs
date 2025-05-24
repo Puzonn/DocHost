@@ -8,6 +8,9 @@ public class ContainerStatusModel
     public string Status { get; set; }
     public string State  { get; set; }
     public string Name { get; set; }
+    public string ContainerId { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<Port> Ports  { get; set; }
+    
+    public static readonly ContainerStatusModel Empty = new ContainerStatusModel();
 }
