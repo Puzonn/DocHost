@@ -9,7 +9,7 @@ namespace DocHost.Controllers;
 [Route("api/[controller]")]
 public class StatusController(DockerClient client) : ControllerBase
 {
-    [HttpGet("")]
+    [HttpGet]
     public async Task<IEnumerable<ContainerStatusModel>> GetAllStatus()
     {
         IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(
