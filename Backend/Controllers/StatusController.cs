@@ -1,4 +1,5 @@
-﻿using DocHost.Models;
+﻿using System.Text;
+using DocHost.Models;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -6,9 +7,50 @@ using Microsoft.AspNetCore.Mvc;
 namespace DocHost.Controllers;
 
 [Controller]
-[Route("api/[controller]/status")]
+[Route("api/[controller]/")]
 public class StatusController(DockerClient client) : ControllerBase
 {
+    [HttpGet("get-console")]
+    public async Task<string> GetConsole()
+    {
+        var containerId = "e50614fe0e6e";
+
+        var parameters = new ContainerLogsParameters
+        {
+            ShowStdout = true,
+            ShowStderr = true,
+            Tail = "100" // Number of last lines
+        };
+
+        using (var stream = await client.Containers.GetContainerLogsAsync(containerId, parameters))
+        using (var reader = new StreamReader(stream, Encoding.UTF8))
+        {
+            string log = await reader.ReadToEndAsync();
+            return log;
+        }
+    }
+
+    [HttpPost("send-input")]
+    public async Task SendInput([FromQuery]string command)
+    {
+        string containerId = "e50614fe0e6e";
+
+        var attachParams = new ContainerAttachParameters
+        {
+            Stream = true,
+            Stdin = true,
+            Stdout = true,
+            Stderr = true,
+            
+        };
+
+        using var muxedStream = await client.Containers.AttachContainerAsync(
+            containerId, true, attachParams, default);
+
+        byte[] input = Encoding.UTF8.GetBytes(command + "\n");
+        await muxedStream.WriteAsync(input, 0, input.Length, default);
+    }
+    
     [HttpGet("")]
     public async Task<IEnumerable<ContainerStatusModel>> GetAllStatus()
     {
