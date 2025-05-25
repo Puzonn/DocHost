@@ -9,7 +9,10 @@ public class ConsoleHub(DockerClient client) : Hub
 {
     public override async Task OnConnectedAsync()
     {
-        var containerId = "8da03f40e403cd0bd1e3b9de397ed08fd0b3d2236a2dfab41a67dae8427bb746";
+        var httpContext = Context.GetHttpContext();
+        var id = httpContext.Request.Query["containerid"];
+        
+        var containerId = id;
 
         var parameters = new ContainerLogsParameters
         {

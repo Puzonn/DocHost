@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import type { Command } from "./Types/Types";
 import * as signalR from "@microsoft/signalr";
+import { useSearchParams } from "react-router-dom";
 
 export const Console = () => {
+  const [searchParams] = useSearchParams();
+  const containerId = searchParams.get("containerid");
   const [inputs, setInputs] = useState<Command[]>([]);
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5252/hubs/console")
+    .withUrl(`http://localhost:5252/hubs/console?containerId=${containerId}`)
     .build();
 
   useEffect(() => {
-    fetch("http://localhost:5252/api/status/get-console").then((e) => {
-      e.text().then((r) => {
-        const command: Command = { Content: r, IsServer: true };
-        handleSubmitCommand(command);
-      });
+    connection.on("ReceiveLog", (e) => {
+      const command: Command = {
+        IsServer: true,
+        Content: (e as string)
+          .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
+          .substring(1),
+      }; /* Remove wierd ascii shit */
+      handleSubmitCommand(command);
     });
     connection.start();
   }, []);
@@ -66,7 +72,7 @@ export const Console = () => {
                 handleSubmitCommand(command);
 
                 fetch(
-                  `http://localhost:5252/api/status/send-input?command=${command.Content}`,
+                  `http://localhost:5252/api/status/send-input?command=${command.Content}&id=${containerId}`,
                   { method: "POST" }
                 );
 

@@ -31,30 +31,10 @@ public class StatusController(DockerClient client) : ControllerBase
         });
     }
 
-    [HttpGet("get-console")]
-    public async Task<string> GetConsole()
-    {
-        var containerId = "e50614fe0e6e";
-
-        var parameters = new ContainerLogsParameters
-        {
-            ShowStdout = true,
-            ShowStderr = true,
-            Tail = "100"
-        };
-
-        using (var stream = await client.Containers.GetContainerLogsAsync(containerId, parameters))
-        using (var reader = new StreamReader(stream, Encoding.UTF8))
-        {
-            string log = await reader.ReadToEndAsync();
-            return log;
-        }
-    }
-
     [HttpPost("send-input")]
-    public async Task SendInput([FromQuery]string command)
+    public async Task SendInput([FromQuery]string command, [FromQuery]string id)
     {
-        string containerId = "8da03f40e403cd0bd1e3b9de397ed08fd0b3d2236a2dfab41a67dae8427bb746";
+        string containerId = id;
 
         var attachParams = new ContainerAttachParameters
         {
