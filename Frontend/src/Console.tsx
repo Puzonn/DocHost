@@ -9,25 +9,27 @@ export const Console = () => {
     .build();
 
   useEffect(() => {
-    connection.start();
     connection.on("ReceiveLog", (e) => {
-      console.log(e);
+      const command: Command = { IsServer: true, Content: e };
+      handleSubmitCommand(command);
     });
+    connection.start();
   }, []);
 
   const handleSubmitCommand = (command: Command) => {
+    console.log("added new command: ", command);
     setInputs([...inputs, command]);
-    fetch(
-      `http://localhost:5252/api/status/send-input?command=${command.Content}`,
-      { method: "POST" }
-    );
+    // fetch(
+    //   `http://localhost:5252/api/status/send-input?command=${command.Content}`,
+    //   { method: "POST" }
+    // );
   };
 
   useEffect(() => {
     fetch("http://localhost:5252/api/status/get-console").then((e) => {
       e.text().then((r) => {
         const command: Command = { Content: r, IsServer: true };
-        handleSubmitCommand(command);
+        // handleSubmitCommand(command);
       });
     });
   }, []);
@@ -74,6 +76,12 @@ export const Console = () => {
                 };
 
                 handleSubmitCommand(command);
+
+                fetch(
+                  `http://localhost:5252/api/status/send-input?command=${command.Content}`,
+                  { method: "POST" }
+                );
+
                 e.currentTarget.value = "";
               }
             }}

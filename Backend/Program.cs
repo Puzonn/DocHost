@@ -1,15 +1,12 @@
 using DocHost.Database;
 using DocHost.Hubs;
-using DocHost.Hubs;
 using DocHost.Services;
 using Docker.DotNet;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
 
-builder.Services.AddSignalR();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(HostService));
@@ -17,9 +14,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(e =>
     {
+        e.WithOrigins("http://localhost:5173");
         e.AllowAnyHeader();
         e.AllowAnyMethod();
-        e.AllowAnyOrigin();
+        e.AllowCredentials();
     });
 });
 
