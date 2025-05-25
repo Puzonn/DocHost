@@ -6,10 +6,10 @@ export const Console = () => {
 
   const handleSubmitCommand = (command: Command) => {
     setInputs([...inputs, command]);
-    fetch(
-      `http://localhost:5252/api/status/send-input?command=${command.Content}`,
-      { method: "POST" }
-    ).then((e) => {});
+    // fetch(
+    //   `http://localhost:5252/api/status/send-input?command=${command.Content}`,
+    //   { method: "POST" }
+    // ).then((e) => {});
   };
 
   useEffect(() => {

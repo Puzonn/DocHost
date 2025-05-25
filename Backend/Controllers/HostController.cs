@@ -9,6 +9,7 @@ namespace DocHost.Controllers;
 public class HostController(HostService hostService) : ControllerBase
 {
     [HttpPost("minecraft")]
+    [Obsolete]
     public async Task CreateMinecraftServer(ServerCreationModel model)
     {
         await hostService.Host(new MinecraftCreationModel()
