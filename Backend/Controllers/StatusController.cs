@@ -10,6 +10,27 @@ namespace DocHost.Controllers;
 [Route("api/[controller]/")]
 public class StatusController(DockerClient client) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IEnumerable<ContainerStatusModel>> GetAllStatus()
+    {
+        IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(
+            new ContainersListParameters()
+            {
+                All = true
+            });
+
+        return containers.Select(x => new ContainerStatusModel()
+        {
+            ContainerId = x.ImageID,
+            Id = x.ID,
+            Name = string.Join(", ", x.Names),
+            State = x.State,
+            Status = x.Status,
+            CreatedAt = x.Created,
+            Ports = x.Ports.ToList()
+        });
+    }
+
     [HttpGet("get-console")]
     public async Task<string> GetConsole()
     {
@@ -19,7 +40,7 @@ public class StatusController(DockerClient client) : ControllerBase
         {
             ShowStdout = true,
             ShowStderr = true,
-            Tail = "100" // Number of last lines
+            Tail = "100"
         };
 
         using (var stream = await client.Containers.GetContainerLogsAsync(containerId, parameters))
@@ -41,7 +62,7 @@ public class StatusController(DockerClient client) : ControllerBase
             Stdin = true,
             Stdout = true,
             Stderr = true,
-            
+
         };
 
         using var muxedStream = await client.Containers.AttachContainerAsync(
@@ -51,26 +72,6 @@ public class StatusController(DockerClient client) : ControllerBase
         await muxedStream.WriteAsync(input, 0, input.Length, default);
     }
     
-    [HttpGet("")]
-    public async Task<IEnumerable<ContainerStatusModel>> GetAllStatus()
-    {
-        IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(
-            new ContainersListParameters()
-            {
-                All = true
-            });
-
-        return containers.Select(x => new ContainerStatusModel()
-        {
-            Id = x.ID,
-            Name = string.Join(", ", x.Names),
-            State = x.State,
-            Status = x.Status,
-            CreatedAt = x.Created,
-            Ports = x.Ports.ToList()
-        });
-    }
-
     [HttpGet("{id}")]
     public async Task<ContainerStatusModel> GetStatus(string id)
     {

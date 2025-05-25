@@ -1,6 +1,7 @@
 using DocHost.Database;
 using DocHost.Services;
 using Docker.DotNet;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,11 +18,11 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDbContext<HostContext>();
-
 builder.Services.AddSingleton<DockerClient>((e) => new DockerClientConfiguration(
         new Uri(builder.Configuration["Docker:DockerUrl"]!))
     .CreateClient());
+
+builder.Services.AddDbContextPool<HostContext>(opt => { });
 
 var app = builder.Build();
 

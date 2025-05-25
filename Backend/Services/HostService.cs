@@ -17,7 +17,7 @@ public class HostService(IConfiguration configuration, DockerClient client)
         return await client.Containers.CreateContainerAsync(new CreateContainerParameters
         {
             Image = "itzg/minecraft-server:latest",
-            Name = $"{minecraftCreation.OwnerId}-{minecraftCreation.ContainerId}",
+            Name = minecraftCreation.ContainerName,
             Env = new List<string>
             {
                 "EULA=TRUE",

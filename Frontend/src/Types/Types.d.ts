@@ -1,24 +1,28 @@
-export interface ContainerStatus { 
-    Id: string;
-    Status: string;
-    State: string;
-    Name: string;
-    CreatedAt: Date;
-    Ports: Port[]
+export interface ContainerStatus {
+  id: string;
+  status: string;
+  state: string;
+  name: string;
+  createdAt: Date;
+  ports: Port[];
 }
 
 export interface Port {
-    IP: string;
-    PrivatePort: string;
-    PublicPort: string;
-    Type: string;
+  ip: string;
+  privatePort: string;
+  publicPort: string;
+  type: string;
 }
 
-export interface MinecraftHostCreation {
-    
+export interface MinecraftHostCreation {}
+
+export interface Command {
+  Content: string;
+  IsServer: boolean;
 }
 
-export interface Command{
-    Content: string;
-    IsServer: boolean;
+export interface ContainerOption {
+  containerName: string;
+  memory: number;
+  vCpus: number;
 }
