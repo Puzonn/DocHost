@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import type { Command } from "./Types/Types";
+import * as signalR from "@microsoft/signalr";
 
 export const Console = () => {
   const [inputs, setInputs] = useState<Command[]>([]);
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://localhost:5252/hubs/console")
+    .build();
+
+  useEffect(() => {
+    connection.start();
+    connection.on("ReceiveLog", (e) => {
+      console.log(e);
+    });
+  }, []);
 
   const handleSubmitCommand = (command: Command) => {
     setInputs([...inputs, command]);
     fetch(
       `http://localhost:5252/api/status/send-input?command=${command.Content}`,
       { method: "POST" }
-    ).then((e) => {
-      return fetch("http://localhost:5252/api/status/get-console");
-    }).then((res)=>{res.text()}).then((logs))
-
-    ;
+    );
   };
 
   useEffect(() => {

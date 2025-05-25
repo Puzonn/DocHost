@@ -34,7 +34,7 @@ public class StatusController(DockerClient client) : ControllerBase
     [HttpGet("get-console")]
     public async Task<string> GetConsole()
     {
-        var containerId = "e50614fe0e6e";
+        var containerId = "6f1e74519366c6e6a5c67169d9fa5de24b60e391a2974256fdef4fece819917a";
 
         var parameters = new ContainerLogsParameters
         {
@@ -54,7 +54,7 @@ public class StatusController(DockerClient client) : ControllerBase
     [HttpPost("send-input")]
     public async Task SendInput([FromQuery]string command)
     {
-        string containerId = "e50614fe0e6e";
+        string containerId = "6f1e74519366c6e6a5c67169d9fa5de24b60e391a2974256fdef4fece819917a";
 
         var attachParams = new ContainerAttachParameters
         {

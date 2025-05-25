@@ -1,10 +1,13 @@
 using DocHost.Database;
 using DocHost.Hubs;
+using DocHost.Hubs;
 using DocHost.Services;
 using Docker.DotNet;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSignalR();
 
 builder.Services.AddSignalR();
 builder.Services.AddOpenApi();
