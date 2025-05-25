@@ -34,7 +34,7 @@ public class StatusController(DockerClient client) : ControllerBase
     [HttpGet("get-console")]
     public async Task<string> GetConsole()
     {
-        var containerId = "6f1e74519366c6e6a5c67169d9fa5de24b60e391a2974256fdef4fece819917a";
+        var containerId = "e50614fe0e6e";
 
         var parameters = new ContainerLogsParameters
         {
@@ -54,7 +54,7 @@ public class StatusController(DockerClient client) : ControllerBase
     [HttpPost("send-input")]
     public async Task SendInput([FromQuery]string command)
     {
-        string containerId = "6f1e74519366c6e6a5c67169d9fa5de24b60e391a2974256fdef4fece819917a";
+        string containerId = "8da03f40e403cd0bd1e3b9de397ed08fd0b3d2236a2dfab41a67dae8427bb746";
 
         var attachParams = new ContainerAttachParameters
         {
@@ -62,14 +62,13 @@ public class StatusController(DockerClient client) : ControllerBase
             Stdin = true,
             Stdout = true,
             Stderr = true,
-
         };
 
         using var muxedStream = await client.Containers.AttachContainerAsync(
-            containerId, true, attachParams, default);
+            containerId, true, attachParams, CancellationToken.None);
 
         byte[] input = Encoding.UTF8.GetBytes(command + "\n");
-        await muxedStream.WriteAsync(input, 0, input.Length, default);
+        await muxedStream.WriteAsync(input, 0, input.Length, CancellationToken.None);
     }
     
     [HttpGet("{id}")]
