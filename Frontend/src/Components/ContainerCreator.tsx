@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import type { ContainerOption } from "../Types/Types";
 
 export const ContainerCreator = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [containerOptions, setContainerOptions] = useState<ContainerOption[]>(
     []
   );
@@ -16,14 +17,21 @@ export const ContainerCreator = () => {
 
   const handleCreationSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const { name, port, type } = e.target as any;
 
+    if (isLoading) {
+      return;
+    }
+
+    const { name, port, type } = e.target as any;
+    setIsLoading(true);
     fetch(
       `http://localhost:5252/api/container/create?name=${name.value}&port=${port.value}&type=${type.value}`,
       {
         method: "POST",
       }
-    );
+    ).then(() => {
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -70,9 +78,17 @@ export const ContainerCreator = () => {
           <button
             type="submit"
             style={{ backgroundColor: "#d50c2d" }}
-            className="p-2 rounded-md px-4 cursor-pointer hover:scale-[103%] font-bold"
+            className="p-2 rounded-md px-4 cursor-pointer hover:scale-[103%] font-bold flex justify-center items-center"
           >
-            Create
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="h-[30px] w-[30px] border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <span className="flex items-center justify-center h-[30px] w-[30px] ">
+                Create
+              </span>
+            )}
           </button>
         </div>
       </form>
