@@ -1,10 +1,12 @@
 using DocHost.Database;
+using DocHost.Hubs;
 using DocHost.Services;
 using Docker.DotNet;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSignalR();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(HostService));
@@ -34,5 +36,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseHttpsRedirection();
 app.MapControllers();
+
+app.MapHub<ConsoleHub>("/hubs/console");
 
 app.Run();
