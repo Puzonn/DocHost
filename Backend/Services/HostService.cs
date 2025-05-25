@@ -16,11 +16,21 @@ public class HostService(IConfiguration configuration, DockerClient client)
             AttachStderr = true,
             Image = "mc-1.21.5",
             Name = minecraftCreation.ContainerName,
+            ExposedPorts = new Dictionary<string, EmptyStruct>
+            {
+                { "21/tcp", default(EmptyStruct) },
+            },
             HostConfig = new HostConfig
             {
                 PortBindings = new Dictionary<string, IList<PortBinding>>
                 {
-                    { $"{minecraftCreation.Port}/tcp", new List<PortBinding> { new PortBinding { HostPort = minecraftCreation.Port.ToString() } } }
+                    { $"{minecraftCreation.Port}/tcp", new List<PortBinding> { new PortBinding { HostPort = minecraftCreation.Port.ToString() } } },
+                    {
+                    "21/tcp", new List<PortBinding>
+                    {
+                        new PortBinding { HostPort = "2121" }
+                    }
+                },
                 },
             },
         });
