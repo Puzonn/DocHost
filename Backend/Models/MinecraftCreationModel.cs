@@ -8,4 +8,5 @@ public class MinecraftCreationModel
     public string Version { get; set; }
     public int Memory { get; set; }
     public string ContainerName { get; set; }
+    public string ImageName { get; set; }
 }

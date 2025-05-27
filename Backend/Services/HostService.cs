@@ -14,7 +14,7 @@ public class HostService(IConfiguration configuration, DockerClient client)
             AttachStdin = true,
             AttachStdout = true,
             AttachStderr = true,
-            Image = "mc-1.21.5",
+            Image = minecraftCreation.ImageName,
             Name = minecraftCreation.ContainerName,
             ExposedPorts = new Dictionary<string, EmptyStruct>
             {
