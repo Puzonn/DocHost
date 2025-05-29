@@ -3,6 +3,7 @@ using DocHost.Models;
 using DocHost.Models.DTO;
 using DocHost.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DocHost.Controllers;
 
@@ -80,5 +81,28 @@ public class ContainerController(HostService hostService, HostContext context, I
             logger.LogError(ex.ToString()); 
             return Problem("Something went wrong while creating container");
         }
+    }
+
+    [HttpDelete("delete")]
+    public async Task<ActionResult> DeleteContainerById([FromQuery] string containerName)
+    {
+        var server = await context.Servers
+            .FirstOrDefaultAsync(x => x.Name == containerName);
+
+        if (server is not null)
+        {
+            context.Servers.Remove(server);
+            
+            await context.SaveChangesAsync();
+        }
+
+        var deleteResponse = await hostService.DeleteContainer(containerName);
+
+        if (!deleteResponse.Success)
+        {
+            return BadRequest(deleteResponse.Error);
+        }
+
+        return Ok();
     }
 }

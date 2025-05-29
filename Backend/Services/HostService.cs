@@ -6,6 +6,45 @@ namespace DocHost.Services;
 
 public class HostService(IConfiguration configuration, DockerClient client)
 {
+    public async Task<(bool Success, string? Error)> DeleteContainer(string containerName)
+    {
+        try
+        {
+            var containers = await client.Containers.ListContainersAsync(new ContainersListParameters
+            {
+                All = true
+            });
+
+            var container = containers.FirstOrDefault(c =>
+                c.Names.Any(n => n.TrimStart('/').Equals(containerName, StringComparison.OrdinalIgnoreCase)));
+
+            if (container == null)
+            {
+                return (false, $"Container '{containerName}' not found.");
+            }
+
+            if (container.State == "running")
+            {
+                await client.Containers.StopContainerAsync(container.ID, new ContainerStopParameters());
+            }
+
+            await client.Containers.RemoveContainerAsync(container.ID, new ContainerRemoveParameters
+            {
+                Force = true
+            });
+
+            return (true, null);
+        }
+        catch (DockerApiException ex)
+        {
+            return (false, $"Docker API error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Unexpected error: {ex.Message}");
+        }
+    }
+    
     public async Task<CreateContainerResponse> Host(MinecraftCreation request)
     {
         return await client.Containers.CreateContainerAsync(new CreateContainerParameters
