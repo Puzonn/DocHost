@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace DocHost.Hubs;
 
-public class ConsoleHub(DockerClient client) : Hub
+public class ConsoleHub(DockerClient client, ILogger<ConsoleHub> logger) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -21,18 +21,10 @@ public class ConsoleHub(DockerClient client) : Hub
             Tail = "all",
             Follow = true
         };
-
-        var attachParams = new ContainerAttachParameters
-        {
-            Stream = true,
-            Stdin = true,
-            Stdout = true,
-            Stderr = true,
-        };
         
         await client.Containers.GetContainerLogsAsync(containerId, parameters, Context.ConnectionAborted, new Progress<string>(async (message) =>
         {
-            await Task.Delay(50);
+            await Task.Delay(10);
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveLog", message);
         }));
     }

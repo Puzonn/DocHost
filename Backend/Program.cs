@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
 
+builder.Services.AddLogging();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(HostService));
