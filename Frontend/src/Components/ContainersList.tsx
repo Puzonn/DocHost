@@ -79,7 +79,14 @@ export const ContainerList = () => {
         <tbody className="divide-y divide-gray-800">
           {containers.map((container) => (
             <tr key={container.id} className="hover:bg-gray-800">
-              <td className="px-4 py-2 text-sm">{container.name}</td>
+              <td
+                className="px-4 py-2 text-sm"
+                onClick={(e) => {
+                  window.location.href = `http://localhost:5173/console?containerid=${container.id}`;
+                }}
+              >
+                {container.name}
+              </td>
               <td
                 onClick={(e) =>
                   navigator.clipboard.writeText(e.currentTarget.textContent!)

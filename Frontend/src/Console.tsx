@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Command } from "./Types/Types";
 import * as signalR from "@microsoft/signalr";
+import { useSearchParams } from "react-router-dom";
 
 export const Console = () => {
+  const [searchParams] = useSearchParams();
+  const containerId = searchParams.get("containerid");
   const [inputs, setInputs] = useState<Command[]>([]);
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5252/hubs/console")
+    .withUrl(`http://localhost:5252/hubs/console?containerId=${containerId}`)
     .build();
 
   useEffect(() => {
@@ -69,7 +72,7 @@ export const Console = () => {
                 handleSubmitCommand(command);
 
                 fetch(
-                  `http://localhost:5252/api/status/send-input?command=${command.Content}`,
+                  `http://localhost:5252/api/status/send-input?command=${command.Content}&id=${containerId}`,
                   { method: "POST" }
                 );
 
