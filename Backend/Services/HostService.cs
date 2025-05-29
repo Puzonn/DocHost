@@ -6,7 +6,7 @@ namespace DocHost.Services;
 
 public class HostService(IConfiguration configuration, DockerClient client)
 {
-    public async Task<CreateContainerResponse> Host(MinecraftCreationModel minecraftCreation)
+    public async Task<CreateContainerResponse> Host(MinecraftCreation request)
     {
         return await client.Containers.CreateContainerAsync(new CreateContainerParameters
         {
@@ -14,8 +14,8 @@ public class HostService(IConfiguration configuration, DockerClient client)
             AttachStdin = true,
             AttachStdout = true,
             AttachStderr = true,
-            Image = minecraftCreation.ImageName,
-            Name = minecraftCreation.ContainerName,
+            Image = request.ImageName,
+            Name = request.ContainerName,
             ExposedPorts = new Dictionary<string, EmptyStruct>
             {
                 { "21/tcp", default(EmptyStruct) },
@@ -24,11 +24,23 @@ public class HostService(IConfiguration configuration, DockerClient client)
             {
                 PortBindings = new Dictionary<string, IList<PortBinding>>
                 {
-                    { $"{minecraftCreation.Port}/tcp", new List<PortBinding> { new PortBinding { HostPort = minecraftCreation.Port.ToString() } } },
+                    {
+                        "25565/tcp", //TODO: Check if default minecraft server will be always on this port
+                        new List<PortBinding>
+                        {
+                            new PortBinding
+                            {
+                                HostPort = request.ServerPort.ToString()
+                            }
+                        }
+                    },
                     {
                     "21/tcp", new List<PortBinding>
                     {
-                        new PortBinding { HostPort = "2121" }
+                        new PortBinding
+                        {
+                            HostPort = request.FtpPort.ToString()
+                        },
                     }
                 },
                 },

@@ -17,19 +17,19 @@ public class ContainerController(HostService hostService, HostContext context, I
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<Server>> CreateContainerByName([FromQuery] string type, [FromQuery] string name, [FromQuery] int port)
+    public async Task<ActionResult<Server>> CreateContainerByName([FromBody] CreateServerRequest request)
     {
-        var option = ContainerOption.ContainerOptions.FirstOrDefault(x => x.ContainerName == type);
+        var option = ContainerOption.ContainerOptions.FirstOrDefault(x => x.ContainerName == request.Type);
 
         if (option is null)
         {
             return BadRequest("Container name not found");
         }
 
-        var model = new MinecraftCreationModel()
+        var model = new MinecraftCreation()
         {
-            ContainerName = name,
-            Port = port,
+            ContainerName = request.Name,
+            ServerPort = request.ServerPort,
             Version = option.Version,
             Memory = option.Memory,
             OwnerId = Guid.NewGuid().ToString(),
@@ -45,13 +45,18 @@ public class ContainerController(HostService hostService, HostContext context, I
             {
                 Image = option.ImageName,
                 CreatedAt = DateTime.UtcNow,
-                Name = name,
+                Name = request.Name,
                 Ports =
                 [
                     new ContainerPort()
                     {
-                        ExposedPort = port,
+                        ExposedPort = request.ServerPort,
                         Port = 25565
+                    },
+                    new ContainerPort()
+                    {
+                        ExposedPort = request.FtpPort,
+                        Port = 21
                     }
                 ]
             });
@@ -60,12 +65,12 @@ public class ContainerController(HostService hostService, HostContext context, I
 
             return Ok(new ServerDto()
             {
-                Name = name,    
+                Name = request.Name,    
                 CreatedAt = server.Entity.CreatedAt,    
                 Image = server.Entity.Image,   
                 Ports = server.Entity.Ports.Select(x => new ContainerPortDto()
                 {
-                    Port = port,
+                    Port = request.ServerPort,
                     ExposedPort = x.ExposedPort,
                 }).ToList(),
             });
