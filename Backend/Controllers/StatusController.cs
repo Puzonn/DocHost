@@ -30,11 +30,11 @@ public class StatusController(DockerClient client) : ControllerBase
             Ports = x.Ports.ToList()
         });
     }
-    
+
     [HttpPost("send-input")]
-    public async Task SendInput([FromQuery]string command)
+    public async Task SendInput([FromQuery]string command, [FromQuery]string id)
     {
-        string containerId = "8da03f40e403cd0bd1e3b9de397ed08fd0b3d2236a2dfab41a67dae8427bb746";
+        string containerId = id;
 
         var attachParams = new ContainerAttachParameters
         {
