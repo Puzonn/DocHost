@@ -4,7 +4,7 @@ using Docker.DotNet.Models;
 
 namespace DocHost.Services;
 
-public class HostService(IConfiguration configuration, DockerClient client)
+public class ContainerService(IConfiguration configuration, DockerClient client)
 {
     public async Task<(bool Success, string? Error)> DeleteContainer(string containerName)
     {
@@ -15,8 +15,7 @@ public class HostService(IConfiguration configuration, DockerClient client)
                 All = true
             });
 
-            var container = containers.FirstOrDefault(c =>
-                c.Names.Any(n => n.TrimStart('/').Equals(containerName, StringComparison.OrdinalIgnoreCase)));
+            var container = containers.FirstOrDefault(c => c.Names.Any(e => e == containerName));
 
             if (container == null)
             {
@@ -57,10 +56,12 @@ public class HostService(IConfiguration configuration, DockerClient client)
             Name = request.ContainerName,
             ExposedPorts = new Dictionary<string, EmptyStruct>
             {
-                { "21/tcp", default(EmptyStruct) },
+                { "21/tcp", default },
+                { "25565/tcp", default },
             },
             HostConfig = new HostConfig
             {
+                PublishAllPorts = false,
                 PortBindings = new Dictionary<string, IList<PortBinding>>
                 {
                     {
@@ -85,5 +86,23 @@ public class HostService(IConfiguration configuration, DockerClient client)
                 },
             },
         });
+    }
+
+    public async Task Start(string containerName)
+    {
+        var containers = await client.Containers.ListContainersAsync(new ContainersListParameters
+        {
+            All = true
+        });
+
+        var container = containers.FirstOrDefault(c => c.Names.Any(e => e == containerName));
+
+        if (container == null)
+        {
+            return;
+            // return (false, $"Container '{containerName}' not found.");
+        }
+        
+        await client.Containers.StartContainerAsync(container.ID, new ContainerStartParameters());
     }
 }

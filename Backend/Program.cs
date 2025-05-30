@@ -10,7 +10,7 @@ builder.Services.AddSignalR();
 builder.Services.AddLogging();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
-builder.Services.AddScoped(typeof(HostService));
+builder.Services.AddScoped(typeof(ContainerService));
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(e =>

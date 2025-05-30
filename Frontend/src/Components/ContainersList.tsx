@@ -53,6 +53,17 @@ export const ContainerList = () => {
     });
   };
 
+  const handleStartAction = (containerName: string) => {
+    fetch(
+      `http://localhost:5252/api/container/start?containerName=${containerName}`,
+      {
+        method: "POST",
+      }
+    ).then(() => {
+      window.location.reload();
+    });
+  };
+
   return (
     <div
       className="overflow-x-auto rounded-xl shadow border border-gray-500 flex justify-center items-center h-full w-screen"
@@ -130,16 +141,15 @@ export const ContainerList = () => {
             <button
               className="cursor-pointer p-2 hover:bg-opacity-90"
               onClick={() => {
-                handleDeleteAction(menuInfo.container.name);
+                handleStartAction(menuInfo.container.name);
                 setMenuInfo(null);
               }}
             >
-              Run
+              Start
             </button>
             <button
               className="cursor-pointer p-2 hover:bg-opacity-90"
               onClick={() => {
-                //TODO: Redirect to console
                 setMenuInfo(null);
               }}
             >

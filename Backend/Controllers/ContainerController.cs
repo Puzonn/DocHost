@@ -9,7 +9,7 @@ namespace DocHost.Controllers;
 
 [Controller]
 [Route("api/[controller]")]
-public class ContainerController(HostService hostService, HostContext context, ILogger<ContainerController> logger) : ControllerBase
+public class ContainerController(ContainerService containerService, HostContext context, ILogger<ContainerController> logger) : ControllerBase
 {
     [HttpGet("options")]
     public ActionResult<List<ContainerOption>> Options()
@@ -40,7 +40,7 @@ public class ContainerController(HostService hostService, HostContext context, I
 
         try
         {
-            await hostService.Host(model);
+            await containerService.Host(model);
             
             var server = await context.Servers.AddAsync(new Server()
             {
@@ -84,7 +84,7 @@ public class ContainerController(HostService hostService, HostContext context, I
     }
 
     [HttpDelete("delete")]
-    public async Task<ActionResult> DeleteContainerById([FromQuery] string containerName)
+    public async Task<ActionResult> DeleteContainerByName([FromQuery] string containerName)
     {
         var server = await context.Servers
             .FirstOrDefaultAsync(x => x.Name == containerName);
@@ -96,7 +96,7 @@ public class ContainerController(HostService hostService, HostContext context, I
             await context.SaveChangesAsync();
         }
 
-        var deleteResponse = await hostService.DeleteContainer(containerName);
+        var deleteResponse = await containerService.DeleteContainer(containerName);
 
         if (!deleteResponse.Success)
         {
@@ -104,5 +104,11 @@ public class ContainerController(HostService hostService, HostContext context, I
         }
 
         return Ok();
+    }
+
+    [HttpPost("start")]
+    public async Task StartContainerByName([FromQuery] string containerName)
+    {
+        await containerService.Start(containerName);  
     }
 }

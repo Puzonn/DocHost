@@ -39,6 +39,7 @@ export const ContainerCreator = () => {
       }),
     })
       .then(() => {
+        window.location.reload();
         setIsLoading(false);
       })
       .catch(() => {
