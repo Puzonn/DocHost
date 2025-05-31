@@ -2,6 +2,7 @@
 using DocHost.Models;
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocHost.Controllers;
@@ -11,6 +12,7 @@ namespace DocHost.Controllers;
 public class StatusController(DockerClient client) : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public async Task<IEnumerable<ContainerStatusModel>> GetAllStatus()
     {
         IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(
@@ -32,6 +34,7 @@ public class StatusController(DockerClient client) : ControllerBase
     }
 
     [HttpPost("send-input")]
+    [Authorize]
     public async Task SendInput([FromQuery]string command, [FromQuery]string id)
     {
         string containerId = id;
@@ -52,6 +55,7 @@ public class StatusController(DockerClient client) : ControllerBase
     }
     
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ContainerStatusModel> GetStatus(string id)
     {
         IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(new());

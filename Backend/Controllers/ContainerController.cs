@@ -2,6 +2,7 @@
 using DocHost.Models;
 using DocHost.Models.DTO;
 using DocHost.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ public class ContainerController(ContainerService containerService, HostContext 
     }
 
     [HttpPost("create")]
+    [Authorize]
     public async Task<ActionResult<Server>> CreateContainerByName([FromBody] CreateServerRequest request)
     {
         var option = ContainerOption.ContainerOptions.FirstOrDefault(x => x.ContainerName == request.Type);
@@ -84,6 +86,7 @@ public class ContainerController(ContainerService containerService, HostContext 
     }
 
     [HttpDelete("delete")]
+    [Authorize]
     public async Task<ActionResult> DeleteContainerByName([FromQuery] string containerName)
     {
         var server = await context.Servers
@@ -107,6 +110,7 @@ public class ContainerController(ContainerService containerService, HostContext 
     }
 
     [HttpPost("start")]
+    [Authorize]
     public async Task StartContainerByName([FromQuery] string containerName)
     {
         await containerService.Start(containerName);  

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using DocHost.Database;
+﻿using DocHost.Database;
 using DocHost.Models;
 using DocHost.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +13,7 @@ namespace DocHost.Controllers;
 public class AuthController(HostContext context) : ControllerBase
 {
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult> Login([FromBody] LoginRequest login)
     {
         /* Temporary register functionality will stay here until its properly implemented */
