@@ -5,10 +5,25 @@ using Docker.DotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Redis:RedisUrl"]; 
+    options.InstanceName = "DcoHost";
+});
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "doc_host-session";
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
 builder.Services.AddSignalR();
 
 builder.Services.AddLogging();
-builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(ContainerService));
 builder.Services.AddCors(options =>
@@ -37,6 +52,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.UseHttpsRedirection();
+app.UseSession();
+app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ConsoleHub>("/hubs/console");

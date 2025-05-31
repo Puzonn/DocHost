@@ -26,3 +26,13 @@ export interface ContainerOption {
   memory: number;
   vCpus: number;
 }
+
+export interface User {
+  username: string;
+  userId: number;
+}
+
+export interface UserContextType {
+  user: User | undefined;
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+}

@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace DocHost.Models;
 
 /// <summary>
@@ -6,6 +8,7 @@ namespace DocHost.Models;
 /// </summary>
 public class ContainerPort
 {
+    [Key]
     public int Id { get; set; }
     
     /// <summary>

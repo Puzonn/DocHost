@@ -14,4 +14,7 @@ public class Server
     public DateTime CreatedAt { get; set; }
 
     public List<ContainerPort> Ports { get; set; }
+    
+    public int OwnerId { get; set; }
+    public User Owner { get; set; }
 }

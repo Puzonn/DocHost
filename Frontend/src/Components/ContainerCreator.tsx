@@ -48,7 +48,7 @@ export const ContainerCreator = () => {
   };
 
   return (
-    <div className="flex flex-col items-center ">
+    <div className="flex flex-col items-center">
       <form onSubmit={handleCreationSubmit}>
         <div
           className="flex flex-col gap-4 justify-center w-fit p-5 text-white"

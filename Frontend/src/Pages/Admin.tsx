@@ -1,5 +1,5 @@
-import { ContainerCreator } from "./Components/ContainerCreator";
-import { ContainerList } from "./Components/ContainersList";
+import { ContainerCreator } from "../Components/ContainerCreator";
+import { ContainerList } from "../Components/ContainersList";
 
 export const Admin = () => {
   return (
