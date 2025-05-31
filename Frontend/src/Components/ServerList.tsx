@@ -1,19 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import type { ContainerStatus } from "../Types/Types";
+import type { ServerStatus } from "../Types/Types";
 
-export const ContainerList = () => {
-  const [containers, setContainers] = useState<ContainerStatus[]>([]);
+export const ServerList = () => {
+  const [servers, setServers] = useState<ServerStatus[]>([]);
   const [menuInfo, setMenuInfo] = useState<{
-    container: ContainerStatus;
+    container: ServerStatus;
     top: number;
     left: number;
   } | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5252/api/status")
+    fetch("http://localhost:5252/api/container/statuses", {
+      credentials: "include",
+    })
       .then((e) => e.json())
-      .then(setContainers);
+      .then(setServers);
   }, []);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export const ContainerList = () => {
 
   const handleActionsClick = (
     e: React.MouseEvent<HTMLButtonElement>,
-    container: ContainerStatus
+    container: ServerStatus
   ) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMenuInfo((prev) =>
@@ -46,6 +48,7 @@ export const ContainerList = () => {
     fetch(
       `http://localhost:5252/api/container/delete?containerName=${containerName}`,
       {
+        credentials: "include",
         method: "DELETE",
       }
     ).then(() => {
@@ -57,6 +60,7 @@ export const ContainerList = () => {
     fetch(
       `http://localhost:5252/api/container/start?containerName=${containerName}`,
       {
+        credentials: "include",
         method: "POST",
       }
     ).then(() => {
@@ -88,15 +92,15 @@ export const ContainerList = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-800">
-          {containers.map((container) => (
-            <tr key={container.id} className="hover:bg-gray-800">
+          {servers.map((server) => (
+            <tr key={server.id} className="hover:bg-gray-800">
               <td
                 className="px-4 py-2 text-sm"
                 onClick={(e) => {
-                  window.location.href = `http://localhost:5173/console?containerid=${container.id}`;
+                  window.location.href = `http://localhost:5173/console?containerid=${server.id}`;
                 }}
               >
-                {container.name}
+                {server.name}
               </td>
               <td
                 onClick={(e) =>
@@ -104,17 +108,17 @@ export const ContainerList = () => {
                 }
                 className="px-4 py-2 text-sm cursor-pointer hover:underline"
               >
-                {container.id}
+                {server.id}
               </td>
               <td className="px-4 py-2 text-sm text-blue-400">
-                {container.status}
+                {server.status}
               </td>
-              <td className="px-4 py-2 text-sm">{container.state}</td>
+              <td className="px-4 py-2 text-sm">{server.state}</td>
               <td className="px-4 py-2 text-sm text-gray-400">
-                {new Date(container.createdAt).toLocaleString()}
+                {new Date(server.createdAt).toLocaleString()}
               </td>
               <td className="px-4 py-2 text-sm">
-                {container.ports.map((port, idx) => (
+                {server.ports.map((port, idx) => (
                   <div key={idx}>
                     {port.ip} {port.privatePort} {port.publicPort} {port.type}
                   </div>
@@ -122,7 +126,7 @@ export const ContainerList = () => {
               </td>
               <td className="px-4 py-2 text-sm">
                 <button
-                  onClick={(e) => handleActionsClick(e, container)}
+                  onClick={(e) => handleActionsClick(e, server)}
                   style={{ backgroundColor: "#3d3b3b" }}
                   className="p-1 px-2 rounded-md font-semibold hover:scale-[103%] cursor-pointer"
                 >

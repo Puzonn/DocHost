@@ -1,5 +1,5 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace DocHost.Models;
 
@@ -21,6 +21,9 @@ public class ContainerPort
     /// </summary>
     public int Port { get; set; }
 
+    [JsonIgnore]
     public int ServerId { get; set; }
+    
+    [JsonIgnore]
     public Server Server { get; set; } 
 }

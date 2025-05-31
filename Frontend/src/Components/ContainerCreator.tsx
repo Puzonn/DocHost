@@ -8,7 +8,9 @@ export const ContainerCreator = () => {
   );
 
   useEffect(() => {
-    fetch("http://localhost:5252/api/container/options").then((r) => {
+    fetch("http://localhost:5252/api/container/options", {
+      credentials: "include",
+    }).then((r) => {
       r.json().then((e) => {
         setContainerOptions(e);
       });
@@ -27,6 +29,7 @@ export const ContainerCreator = () => {
     setIsLoading(true);
 
     fetch("http://localhost:5252/api/container/create", {
+      credentials: "include",
       method: "POST",
       headers: {
         "Content-Type": "application/json",

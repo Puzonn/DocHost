@@ -1,10 +1,10 @@
 import { ContainerCreator } from "../Components/ContainerCreator";
-import { ContainerList } from "../Components/ContainersList";
+import { ServerList } from "../Components/ServerList";
 
 export const Admin = () => {
   return (
     <>
-      <ContainerList></ContainerList>
+      <ServerList></ServerList>
       <ContainerCreator></ContainerCreator>
     </>
   );

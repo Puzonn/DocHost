@@ -1,5 +1,9 @@
-export interface ContainerStatus {
+export interface ServerStatus {
   id: string;
+  containerId: string;
+  ownerId: number;
+  ownerUsername: string;
+  image: string;
   status: string;
   state: string;
   name: string;

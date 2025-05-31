@@ -44,7 +44,7 @@ public class ContainerService(IConfiguration configuration, DockerClient client)
         }
     }
     
-    public async Task<CreateContainerResponse> Host(MinecraftCreation request)
+    public async Task<CreateContainerResponse> CreateContainer(MinecraftCreation request)
     {
         return await client.Containers.CreateContainerAsync(new CreateContainerParameters
         {
@@ -100,9 +100,18 @@ public class ContainerService(IConfiguration configuration, DockerClient client)
         if (container == null)
         {
             return;
-            // return (false, $"Container '{containerName}' not found.");
         }
         
         await client.Containers.StartContainerAsync(container.ID, new ContainerStartParameters());
+    }
+
+    public async Task<ContainerListResponse?> GetStatusContainerById(string id)
+    {
+        IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(new()
+        {
+            All = true
+        });
+        
+        return containers.FirstOrDefault(x => x.ID == id);
     }
 }

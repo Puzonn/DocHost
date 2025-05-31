@@ -1,7 +1,9 @@
-﻿using DocHost.Database;
+﻿using System.Reflection.Metadata.Ecma335;
+using DocHost.Database;
 using DocHost.Models;
 using DocHost.Models.DTO;
 using DocHost.Services;
+using Docker.DotNet.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +20,8 @@ public class ContainerController(ContainerService containerService, HostContext 
         return Ok(ContainerOption.ContainerOptions);
     }
 
-    [HttpPost("create")]
     [Authorize]
+    [HttpPost("create")]
     public async Task<ActionResult<Server>> CreateContainerByName([FromBody] CreateServerRequest request)
     {
         var option = ContainerOption.ContainerOptions.FirstOrDefault(x => x.ContainerName == request.Type);
@@ -35,17 +37,19 @@ public class ContainerController(ContainerService containerService, HostContext 
             ServerPort = request.ServerPort,
             Version = option.Version,
             Memory = option.Memory,
-            OwnerId = Guid.NewGuid().ToString(),
+            OwnerId = HttpContext.Session.GetInt32("UserId").ToString(),
             ContainerId = Guid.NewGuid().ToString(),
             ImageName = option.ImageName,
         };
-
+        
         try
         {
-            await containerService.Host(model);
+            var response = await containerService.CreateContainer(model);
             
             var server = await context.Servers.AddAsync(new Server()
             {
+                OwnerId = HttpContext.Session.GetInt32("UserId")!.Value,
+                ContainerId = response.ID,
                 Image = option.ImageName,
                 CreatedAt = DateTime.UtcNow,
                 Name = request.Name,
@@ -107,6 +111,41 @@ public class ContainerController(ContainerService containerService, HostContext 
         }
 
         return Ok();
+    }
+    
+    [Authorize]
+    [HttpGet("statuses")]
+    public async Task<List<ServerStatus>> GetAllStatus()
+    {
+        var servers = await context.Servers.Include(x => x.Owner).Include(x => x.Ports).ToListAsync();
+
+        var statusTasks = servers.Select(async s =>
+        {
+            var containerStatus = await containerService.GetStatusContainerById(s.ContainerId);
+
+            if (containerStatus is null)
+            {
+                return null;
+            }
+
+            return new ServerStatus()
+            {
+                ContainerId = s.ContainerId,
+                Id = s.Id,
+                OwnerId = s.OwnerId,
+                OwnerUsername = s.Owner.Username,
+                CreatedAt = s.CreatedAt,
+                Image = s.Image,
+                Name = s.Name,
+                Ports = s.Ports,
+                Status = containerStatus.Status,
+                State = containerStatus.State,
+            };
+        });
+
+        var statuses = await Task.WhenAll(statusTasks);
+
+        return statuses.Where(s => s != null).ToList()!;
     }
 
     [HttpPost("start")]
