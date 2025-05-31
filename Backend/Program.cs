@@ -1,7 +1,9 @@
 using DocHost.Database;
 using DocHost.Hubs;
+using DocHost.Middlewares;
 using DocHost.Services;
 using Docker.DotNet;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,8 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddSignalR();
-
+builder.Services.AddAuthentication("Session")
+    .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("Session", null);
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(ContainerService));
@@ -53,6 +56,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseSession();
+app.UseMiddleware<RedisSessionAuthenticationMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

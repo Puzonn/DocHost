@@ -1,6 +1,8 @@
-﻿using DocHost.Database;
+﻿using System.Diagnostics.Contracts;
+using DocHost.Database;
 using DocHost.Models;
 using DocHost.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,16 +49,12 @@ public class AuthController(HostContext context) : ControllerBase
         return Ok();
     }
     
+    [Authorize]
     [HttpGet("me")]
     public ActionResult<UserDto> Info()
     {
-        var username = HttpContext.Session.GetString("Username");
-        var userId = HttpContext.Session.GetInt32("UserId");
-
-        if (string.IsNullOrEmpty(username) || !userId.HasValue)
-        {
-            return Unauthorized("User not found");
-        }
+        var username = HttpContext.Session.GetString("Username")!;
+        var userId = HttpContext.Session.GetInt32("UserId")!;
         
         return Ok(new UserDto()
         {
