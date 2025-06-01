@@ -1,4 +1,6 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace DocHost.Models;
 
 /// <summary>
@@ -6,6 +8,7 @@ namespace DocHost.Models;
 /// </summary>
 public class ContainerPort
 {
+    [Key]
     public int Id { get; set; }
     
     /// <summary>
@@ -18,6 +21,9 @@ public class ContainerPort
     /// </summary>
     public int Port { get; set; }
 
+    [JsonIgnore]
     public int ServerId { get; set; }
+    
+    [JsonIgnore]
     public Server Server { get; set; } 
 }

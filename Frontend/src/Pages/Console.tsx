@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Command } from "./Types/Types";
+import type { Command } from "../Types/Types";
 import * as signalR from "@microsoft/signalr";
 import { useSearchParams } from "react-router-dom";
 

@@ -2,6 +2,7 @@
 using DocHost.Models;
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocHost.Controllers;
@@ -30,8 +31,9 @@ public class StatusController(DockerClient client) : ControllerBase
             Ports = x.Ports.ToList()
         });
     }
-
+    
     [HttpPost("send-input")]
+    [Authorize]
     public async Task SendInput([FromQuery]string command, [FromQuery]string id)
     {
         string containerId = id;
@@ -49,27 +51,5 @@ public class StatusController(DockerClient client) : ControllerBase
 
         byte[] input = Encoding.UTF8.GetBytes(command + "\n");
         await muxedStream.WriteAsync(input, 0, input.Length, CancellationToken.None);
-    }
-    
-    [HttpGet("{id}")]
-    public async Task<ContainerStatusModel> GetStatus(string id)
-    {
-        IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(new());
-        var container = containers.FirstOrDefault(x => x.ID == id);
-
-        if (container == null)
-        {
-            return ContainerStatusModel.Empty;  
-        }
-        
-        return new ContainerStatusModel()
-        {
-            Id = container.ID,
-            Name = string.Join(", ", container.Names),
-            State = container.State,
-            Status = container.Status,
-            CreatedAt = container.Created,
-            Ports = container.Ports.ToList()
-        };
     }
 }

@@ -8,7 +8,9 @@ export const ContainerCreator = () => {
   );
 
   useEffect(() => {
-    fetch("http://localhost:5252/api/container/options").then((r) => {
+    fetch("http://localhost:5252/api/container/options", {
+      credentials: "include",
+    }).then((r) => {
       r.json().then((e) => {
         setContainerOptions(e);
       });
@@ -27,6 +29,7 @@ export const ContainerCreator = () => {
     setIsLoading(true);
 
     fetch("http://localhost:5252/api/container/create", {
+      credentials: "include",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +42,7 @@ export const ContainerCreator = () => {
       }),
     })
       .then(() => {
+        window.location.reload();
         setIsLoading(false);
       })
       .catch(() => {
@@ -47,7 +51,7 @@ export const ContainerCreator = () => {
   };
 
   return (
-    <div className="flex flex-col items-center ">
+    <div className="flex flex-col items-center">
       <form onSubmit={handleCreationSubmit}>
         <div
           className="flex flex-col gap-4 justify-center w-fit p-5 text-white"
