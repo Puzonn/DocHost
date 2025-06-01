@@ -22,16 +22,28 @@ export const ContainerCreator = () => {
       return;
     }
 
-    const { name, port, type } = e.target as any;
+    const { name, server_port, type, ftp_port } = e.target as any;
+
     setIsLoading(true);
-    fetch(
-      `http://localhost:5252/api/container/create?name=${name.value}&port=${port.value}&type=${type.value}`,
-      {
-        method: "POST",
-      }
-    ).then(() => {
-      setIsLoading(false);
-    });
+
+    fetch("http://localhost:5252/api/container/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name.value,
+        serverPort: server_port.value,
+        type: type.value,
+        ftpport: ftp_port.value,
+      }),
+    })
+      .then(() => {
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -69,9 +81,16 @@ export const ContainerCreator = () => {
             className="px-5 outline-none p-2 rounded-md"
           />
           <input
-            name="port"
+            name="server_port"
             type="number"
-            placeholder="Container Port"
+            placeholder="Server Port"
+            style={{ backgroundColor: "#212121" }}
+            className="px-5 outline-none p-2 rounded-md"
+          />
+          <input
+            name="ftp_port"
+            type="number"
+            placeholder="Ftp Port"
             style={{ backgroundColor: "#212121" }}
             className="px-5 outline-none p-2 rounded-md"
           />

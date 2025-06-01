@@ -4,7 +4,7 @@ import type { ContainerStatus } from "../Types/Types";
 export const ContainerList = () => {
   const [containers, setContainers] = useState<ContainerStatus[]>([]);
   const [menuInfo, setMenuInfo] = useState<{
-    containerId: string;
+    container: ContainerStatus;
     top: number;
     left: number;
   } | null>(null);
@@ -28,18 +28,29 @@ export const ContainerList = () => {
 
   const handleActionsClick = (
     e: React.MouseEvent<HTMLButtonElement>,
-    containerId: string
+    container: ContainerStatus
   ) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMenuInfo((prev) =>
-      prev?.containerId === containerId
+      prev?.container === container
         ? null
         : {
-            containerId,
+            container: container,
             top: rect.bottom + window.scrollY + 10,
             left: rect.left + window.scrollX,
           }
     );
+  };
+
+  const handleDeleteAction = (containerName: string) => {
+    fetch(
+      `http://localhost:5252/api/container/delete?containerName=${containerName}`,
+      {
+        method: "DELETE",
+      }
+    ).then(() => {
+      window.location.reload();
+    });
   };
 
   return (
@@ -100,7 +111,7 @@ export const ContainerList = () => {
               </td>
               <td className="px-4 py-2 text-sm">
                 <button
-                  onClick={(e) => handleActionsClick(e, container.id)}
+                  onClick={(e) => handleActionsClick(e, container)}
                   style={{ backgroundColor: "#3d3b3b" }}
                   className="p-1 px-2 rounded-md font-semibold hover:scale-[103%] cursor-pointer"
                 >
@@ -122,26 +133,35 @@ export const ContainerList = () => {
             backgroundColor: "#3d3b3b",
           }}
         >
-          <ul className="py-1 text-sm">
-            <li
+          <div className="flex flex-col text-white font-bold">
+            <button
+              className="cursor-pointer p-2 hover:bg-opacity-90"
               onClick={() => {
-                console.log("Delete container:", menuInfo.containerId);
+                handleDeleteAction(menuInfo.container.name);
                 setMenuInfo(null);
               }}
-              className="px-4 py-2cursor-pointer text-red-600"
             >
-              Start
-            </li>
-            <li
+              Run
+            </button>
+            <button
+              className="cursor-pointer p-2 hover:bg-opacity-90"
               onClick={() => {
-                console.log("Delete container:", menuInfo.containerId);
+                //TODO: Redirect to console
                 setMenuInfo(null);
               }}
-              className="px-4 py-2cursor-pointer text-red-600"
+            >
+              Console
+            </button>
+            <button
+              className="cursor-pointer p-2 hover:bg-opacity-90 text-red-500"
+              onClick={() => {
+                handleDeleteAction(menuInfo.container.name);
+                setMenuInfo(null);
+              }}
             >
               Delete
-            </li>
-          </ul>
+            </button>
+          </div>
         </div>
       )}
     </div>
