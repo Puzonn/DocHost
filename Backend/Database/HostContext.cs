@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using DocHost.Models;
+﻿using DocHost.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocHost.Database;
@@ -8,6 +7,7 @@ public class HostContext(DbContextOptions<HostContext> options, IConfiguration c
 {
     public DbSet<Server> Servers { get; set; }
     public DbSet<ContainerPort> ExposedPorts { get; set; }
+    public DbSet<User> Users { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -17,12 +17,13 @@ public class HostContext(DbContextOptions<HostContext> options, IConfiguration c
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ContainerPort>()
-            .HasKey(p => p.Id);
-        
-        modelBuilder.Entity<ContainerPort>()
             .HasOne(p => p.Server)
             .WithMany(c => c.Ports)
-            .HasForeignKey(p => p.ServerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(p => p.ServerId);
+
+        modelBuilder.Entity<Server>()
+            .HasOne(s => s.Owner)
+            .WithMany(u => u.Servers)
+            .HasForeignKey(s => s.OwnerId);
     }
 }

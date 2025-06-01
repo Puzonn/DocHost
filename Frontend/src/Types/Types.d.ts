@@ -1,5 +1,9 @@
-export interface ContainerStatus {
+export interface ServerStatus {
   id: string;
+  containerId: string;
+  ownerId: number;
+  ownerUsername: string;
+  image: string;
   status: string;
   state: string;
   name: string;
@@ -25,4 +29,15 @@ export interface ContainerOption {
   containerName: string;
   memory: number;
   vCpus: number;
+}
+
+export interface User {
+  username: string;
+  userId: number;
+}
+
+export interface UserContextType {
+  isLoggedIn: boolean;
+  user: User | undefined;
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
 }

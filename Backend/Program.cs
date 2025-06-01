@@ -1,16 +1,34 @@
 using DocHost.Database;
 using DocHost.Hubs;
+using DocHost.Middlewares;
 using DocHost.Services;
 using Docker.DotNet;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Redis:RedisUrl"]; 
+    options.InstanceName = "DcoHost";
+});
 
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "doc_host-session";
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
+builder.Services.AddSignalR();
+builder.Services.AddAuthentication("Session")
+    .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("Session", null);
 builder.Services.AddLogging();
-builder.Services.AddOpenApi();
 builder.Services.AddControllers();
-builder.Services.AddScoped(typeof(HostService));
+builder.Services.AddScoped(typeof(ContainerService));
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(e =>
@@ -37,6 +55,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.UseHttpsRedirection();
+app.UseSession();
+app.UseMiddleware<RedisSessionAuthenticationMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ConsoleHub>("/hubs/console");
