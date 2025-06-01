@@ -23,7 +23,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider
+      value={{ user, setUser, isLoggedIn: user !== undefined }} //TODO: Make better implementation to check if user is logged in
+    >
       {children}
     </AuthContext.Provider>
   );

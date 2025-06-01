@@ -37,6 +37,7 @@ export interface User {
 }
 
 export interface UserContextType {
+  isLoggedIn: boolean;
   user: User | undefined;
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
 }

@@ -14,7 +14,11 @@ export const Login = () => {
         username: username.value,
         password: password.value,
       }),
-    }).then(() => {});
+    }).then((e) => {
+      if (e.ok) {
+        window.location.href = "/";
+      }
+    });
   };
 
   return (

@@ -1,9 +1,7 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using DocHost.Database;
+﻿using DocHost.Database;
 using DocHost.Models;
 using DocHost.Models.DTO;
 using DocHost.Services;
-using Docker.DotNet.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +35,7 @@ public class ContainerController(ContainerService containerService, HostContext 
             ServerPort = request.ServerPort,
             Version = option.Version,
             Memory = option.Memory,
-            OwnerId = HttpContext.Session.GetInt32("UserId").ToString(),
+            OwnerId = HttpContext.Session.GetInt32("UserId").ToString()!,
             ContainerId = Guid.NewGuid().ToString(),
             ImageName = option.ImageName,
         };
