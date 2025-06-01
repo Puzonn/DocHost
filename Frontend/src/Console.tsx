@@ -86,6 +86,15 @@ export const Console = () => {
           />
         </div>
       </div>
+      <div className="p-2">
+        <div className="w-full h-90 bg-gray-800 border-2 border-white flex text-gray-200">
+          <div className="w-[15%] h-full border-r-2 border-white flex flex-col gap-5 justify-top text-2xl p-4 overflow-y-scroll">
+            <span>server.proporties</span>
+            <span>whitelist</span>
+          </div>
+          <div className="w-full h-full border-r-2 border-white flex flex-col justify-top p-4 overflow-y-scroll"></div>
+        </div>
+      </div>
     </>
   );
 };

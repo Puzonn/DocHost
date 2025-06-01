@@ -69,7 +69,7 @@ export const ContainerList = () => {
           {containers.map((container) => (
             <tr key={container.id} className="hover:bg-gray-800">
               <td
-                className="px-4 py-2 text-sm"
+                className="px-4 py-2 text-sm hover:underline cursor-pointer"
                 onClick={(e) => {
                   window.location.href = `http://localhost:5173/console?containerid=${container.id}`;
                 }}
@@ -77,7 +77,7 @@ export const ContainerList = () => {
                 {container.name}
               </td>
               <td
-                onClick={(e) =>
+                onClick={(e) => 
                   navigator.clipboard.writeText(e.currentTarget.textContent!)
                 }
                 className="px-4 py-2 text-sm cursor-pointer hover:underline"
