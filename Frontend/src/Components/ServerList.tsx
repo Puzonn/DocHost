@@ -93,11 +93,11 @@ export const ServerList = () => {
         </thead>
         <tbody className="divide-y divide-gray-800">
           {servers.map((server) => (
-            <tr key={server.id} className="hover:bg-gray-800">
+            <tr key={server.containerId} className="hover:bg-gray-800">
               <td
                 className="px-4 py-2 text-sm hover:underline cursor-pointer"
                 onClick={(e) => {
-                  window.location.href = `http://localhost:5173/console?containerid=${server.id}`;
+                  window.location.href = `http://localhost:5173/console?containerid=${server.containerId}`;
                 }}
               >
                 {server.name}
@@ -108,7 +108,7 @@ export const ServerList = () => {
                 }
                 className="px-4 py-2 text-sm cursor-pointer hover:underline"
               >
-                {server.id}
+                {server.containerId}
               </td>
               <td className="px-4 py-2 text-sm text-blue-400">
                 {server.status}

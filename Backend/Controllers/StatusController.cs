@@ -11,27 +11,6 @@ namespace DocHost.Controllers;
 [Route("api/[controller]/")]
 public class StatusController(DockerClient client) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IEnumerable<ContainerStatusModel>> GetAllStatus()
-    {
-        IList<ContainerListResponse> containers = await client.Containers.ListContainersAsync(
-            new ContainersListParameters()
-            {
-                All = true
-            });
-
-        return containers.Select(x => new ContainerStatusModel()
-        {
-            ContainerId = x.ImageID,
-            Id = x.ID,
-            Name = string.Join(", ", x.Names),
-            State = x.State,
-            Status = x.Status,
-            CreatedAt = x.Created,
-            Ports = x.Ports.ToList()
-        });
-    }
-    
     [HttpPost("send-input")]
     [Authorize]
     public async Task SendInput([FromQuery]string command, [FromQuery]string id)

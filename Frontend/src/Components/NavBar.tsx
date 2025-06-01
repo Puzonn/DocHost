@@ -56,6 +56,20 @@ export const NavBar = () => {
           </span>
         </a>
       )}
+      <a href="admin" className="flex flex-col">
+        <div
+          className={`bg-red-400 w-full h-[4px] ${
+            pathname === "/admin" ? "visible" : " invisible"
+          }`}
+        ></div>
+        <span
+          className={`text-pretty text-lg hover:text-red-400 cursor-pointer py-5 ${
+            pathname === "/admin" ? "text-red-400" : ""
+          } `}
+        >
+          Admin Panel
+        </span>
+      </a>
     </div>
   );
 };
