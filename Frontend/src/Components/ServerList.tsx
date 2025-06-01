@@ -68,6 +68,10 @@ export const ServerList = () => {
     });
   };
 
+  useEffect(() => {
+    console.log(servers.map((x) => x.ports));
+  }, [servers]);
+
   return (
     <div
       className="overflow-x-auto rounded-xl shadow border border-gray-500 flex justify-center items-center h-full w-screen"
@@ -103,7 +107,7 @@ export const ServerList = () => {
                 {server.name}
               </td>
               <td
-                onClick={(e) => 
+                onClick={(e) =>
                   navigator.clipboard.writeText(e.currentTarget.textContent!)
                 }
                 className="px-4 py-2 text-sm cursor-pointer hover:underline"
@@ -120,7 +124,7 @@ export const ServerList = () => {
               <td className="px-4 py-2 text-sm">
                 {server.ports.map((port, idx) => (
                   <div key={idx}>
-                    {port.ip} {port.privatePort} {port.publicPort} {port.type}
+                    {port.exposedPort}:{port.port} / tcp
                   </div>
                 ))}
               </td>

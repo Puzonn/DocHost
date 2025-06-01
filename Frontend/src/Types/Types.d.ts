@@ -12,10 +12,8 @@ export interface ServerStatus {
 }
 
 export interface Port {
-  ip: string;
-  privatePort: string;
-  publicPort: string;
-  type: string;
+  exposedPort: string;
+  port: string;
 }
 
 export interface MinecraftHostCreation {}

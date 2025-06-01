@@ -9,6 +9,7 @@ namespace DocHost.Models;
 public class ContainerPort
 {
     [Key]
+    [JsonIgnore]
     public int Id { get; set; }
     
     /// <summary>
