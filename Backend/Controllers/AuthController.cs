@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DocHost.Controllers;
 
@@ -45,7 +46,8 @@ public class AuthController(HostContext context) : ControllerBase
         
         HttpContext.Session.SetInt32("UserId", user.Id);
         HttpContext.Session.SetString("Username", user.Username);
-
+        HttpContext.Session.SetString("Role", user.Role);
+        
         return Ok();
     }
     
@@ -55,11 +57,13 @@ public class AuthController(HostContext context) : ControllerBase
     {
         var username = HttpContext.Session.GetString("Username")!;
         var userId = HttpContext.Session.GetInt32("UserId")!;
+        var role = HttpContext.Session.GetString("Role")!;
         
         return Ok(new UserDto()
         {
             UserId = userId.Value,
-            Username = username
+            Username = username,
+            Role = role
         });
     }
 }

@@ -34,6 +34,8 @@ export interface ContainerOption {
 export interface User {
   username: string;
   userId: number;
+  role: string;
+  createdAt?: Date;
 }
 
 export interface UserContextType {
