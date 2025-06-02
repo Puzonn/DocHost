@@ -25,7 +25,8 @@ public class AuthController(HostContext context) : ControllerBase
         {
             user = new User()
             {
-                Username = login.Username
+                Username = login.Username,
+                Role = "User"
             };
 
             user.HashedPassword = hasher.HashPassword(user, login.Password);
